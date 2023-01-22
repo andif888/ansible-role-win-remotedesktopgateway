@@ -1,0 +1,67 @@
+---
+# tasks file for ansible-role-win-remotedesktopgateway
+
+- name: Windows Feature Remote Desktop Gateway
+  ansible.windows.win_feature:
+    name: RDS-Gateway
+    state: present
+    include_sub_features: yes
+    include_management_tools: yes
+  register: win_feature
+
+- name: Reboot if installing Remote Desktop Gateway requires it
+  ansible.windows.win_reboot:
+  when: win_feature.reboot_required
+
+- name: Windows Feature Remote Desktop Web Access
+  ansible.windows.win_feature:
+    name: RDS-Web-Access
+    state: present
+    include_sub_features: true
+    include_management_tools: "{{ win_rdg_install_management_tools }}"
+  register: win_feature_rds_web_access
+  when:
+    - win_rdg_install_rdweb
+
+- name: Reboot if installing Remote Desktop Web Access requires it
+  ansible.windows.win_reboot:
+  when: 
+    - win_rdg_install_rdweb
+    - win_feature_rds_web_access is defined
+    - win_feature_rds_web_access.reboot_required
+
+- name: Get local user group name
+  ansible.windows.win_shell: |
+    $users = ([System.Security.Principal.SecurityIdentifier]'S-1-5-32-545').Translate( [System.Security.Principal.NTAccount]).Value
+    write-host $users
+  register: localuser_result
+  changed_when: false
+
+- name: Create a new RDS CAP
+  community.windows.win_rds_cap:
+    name: "{{ win_rdg_rds_cap_name }}"
+    allow_only_sdrts_servers: "{{ win_rdg_rds_cap_allow_only_sdrts_servers }}"
+    auth_method: "{{win_rdg_rds_cap_auth_method }}"
+    computer_groups: "{{ win_rdg_rds_cap_computer_groups }}"
+    idle_timeout: "{{ win_rdg_rds_cap_idle_timeout }}"
+    redirect_clipboard: "{{ win_rdg_rds_cap_redirect_clipboard }}"
+    redirect_drives: "{{ win_rdg_rds_cap_redirect_drives }}"
+    redirect_printers: "{{ win_rdg_rds_cap_redirect_printers }}"
+    redirect_serial: "{{ win_rdg_rds_cap_redirect_serial }}"
+    redirect_pnp: "{{ win_rdg_rds_cap_redirect_pnp }}"
+    session_timeout: "{{ win_rdg_rds_cap_session_timeout }}"
+    session_timeout_action: "{{ win_rdg_rds_cap_session_timeout_action }}"   
+    state: "{{ win_rdg_rds_cap_state }}"
+    user_groups: "{{ (localuser_result.stdout.split(win_path_seperator)[-1] | trim) if (win_rdg_rds_cap_user_groups | length == 0) else win_rdg_rds_cap_user_groups }}"
+    
+
+- name: Create a new RDS RAP
+  community.windows.win_rds_rap:
+    name: "{{ win_rdg_rds_rap_name }}"
+    allowed_ports: "{{ win_rdg_rds_rap_allowed_ports }}"
+    computer_group: "{{ win_rdg_rds_rap_computer_group | default(omit) }}"
+    computer_group_type: "{{ win_rdg_rds_rap_computer_group_type }}"
+    description: "{{ win_rdg_rds_rap_description }}"
+    state: "{{ win_rdg_rds_rap_state }}"
+    user_groups: "{{ (localuser_result.stdout.split(win_path_seperator)[-1] | trim) if (win_rdg_rds_rap_user_groups | length == 0) else win_rdg_rds_rap_user_groups }}"
+...

@@ -1,0 +1,119 @@
+---
+# defaults file for ansible-role-win-remotedesktopgateway
+
+# @var win_rdg_install_management_tools:description: Install Windows Remote Desktop Gateway Management Tools
+win_rdg_install_management_tools: true
+
+# @var win_rdg_install_rdweb:description: Install Windows Remote Desktop Web Access Role
+win_rdg_install_rdweb: false
+
+# @var win_rdg_rds_cap_name:description: Name of the connection authorization policy.
+win_rdg_rds_cap_name: "RDS_CAP"
+
+# @var win_rdg_rds_cap_allow_only_sdrts_servers:description: >
+# Specifies whether connections are allowed only to Remote Desktop Session Host 
+# servers that enforce Remote Desktop Gateway redirection policy.
+# @end
+win_rdg_rds_cap_allow_only_sdrts_servers: no
+
+# @var win_rdg_rds_cap_auth_method:description: >
+# Specifies how the RD Gateway server authenticates users.
+# When a new CAP is created, the default value is password. 
+# Options: both, none, password, smartcard
+# @end
+win_rdg_rds_cap_auth_method: "password"
+
+# @var win_rdg_rds_cap_computer_groups:description: A list of computer groups that is allowed to connect to the Remote Gateway server.
+win_rdg_rds_cap_computer_groups: []
+
+# @var win_rdg_rds_cap_idle_timeout:description: >
+# Specifies the time interval, in minutes, after which an idle session is disconnected.
+# A value of zero disables idle timeout.
+# @end
+win_rdg_rds_cap_idle_timeout: 0
+
+# @var win_rdg_rds_cap_redirect_clipboard:description: Allow clipboard redirection.
+win_rdg_rds_cap_redirect_clipboard: yes
+
+# @var win_rdg_rds_cap_redirect_drives:description: Allow disk drive redirection.
+win_rdg_rds_cap_redirect_drives: yes
+
+# @var win_rdg_rds_cap_redirect_printers:description: Allow printers redirection.
+win_rdg_rds_cap_redirect_printers: no
+
+# @var win_rdg_rds_cap_redirect_serial:description: Allow serial port redirection.
+win_rdg_rds_cap_redirect_serial: no
+
+# @var win_rdg_rds_cap_redirect_pnp:description: Allow Plug and Play devices redirection.
+win_rdg_rds_cap_redirect_pnp: no
+
+# @var win_rdg_rds_cap_session_timeout:description: >
+# The maximum time, in minutes, that a session can be idle. 
+# A value of zero disables session timeout.
+# @end
+win_rdg_rds_cap_session_timeout: 0
+
+# @var win_rdg_rds_cap_session_timeout_action:description: >
+# The action the server takes when a session times out.
+# disconnect: disconnect the session.
+# reauth: silently reauthenticate and reauthorize the session.
+# @end
+win_rdg_rds_cap_session_timeout_action: disconnect
+
+# @var win_rdg_rds_cap_state:description: >
+# The state of connection authorization policy.
+# If `absent` will ensure the policy is removed.
+# If `present` will ensure the policy is configured and exists.
+# If `enabled` will ensure the policy is configured, exists and enabled.
+# If `disabled` will ensure the policy is configured, exists, but disabled.
+# @end
+win_rdg_rds_cap_state: "enabled"
+
+# @var win_rdg_rds_cap_user_groups:description: >
+# A list of user groups that is allowed to connect to the Remote Gateway server.
+# Required when a new CAP is created.
+# @end
+win_rdg_rds_cap_user_groups: []
+
+# @var win_rdg_rds_rap_name:description: Name of the resource authorization policy.
+win_rdg_rds_rap_name: "RDS_RAP"
+
+# @var win_rdg_rds_rap_allowed_ports:description: >
+# List of port numbers through which connections are allowed for this policy.
+# To allow connections through any port, specify ‘any’.
+# @end
+win_rdg_rds_rap_allowed_ports:
+  - any
+
+# @var win_rdg_rds_rap_computer_group:description: >
+# The computer group name that is associated with this resource authorization policy (RAP).
+# This is required when computer_group_type is rdg_group or ad_network_resource_group.
+# @end
+# win_rdg_rds_rap_computer_group: ""
+
+# @var win_rdg_rds_rap_computer_group_type:description: >
+# The computer group type:
+# `rdg_group`: RD Gateway-managed group
+# `ad_network_resource_group`: Active Directory Domain Services network resource group
+# `allow_any`: Allow users to connect to any network resource.
+# @end
+win_rdg_rds_rap_computer_group_type: "allow_any"
+
+# @var win_rdg_rds_rap_description:description: Optional description of the resource authorization policy.
+win_rdg_rds_rap_description: "Allow all users to connect to any resource"
+
+# @var win_rdg_rds_rap_state:description: >
+# The state of resource authorization policy.
+# If `absent` will ensure the policy is removed.
+# If `present` will ensure the policy is configured and exists.
+# If `enabled` will ensure the policy is configured, exists and enabled.
+# If `disabled` will ensure the policy is configured, exists, but disabled.
+# @end
+win_rdg_rds_rap_state: "enabled"
+
+# @var win_rdg_rds_rap_user_groups:description: >
+# List of user groups that are associated with this resource authorization policy (RAP). 
+# A user must belong to one of these groups to access the RD Gateway server.
+# Required when a new RAP is created.
+# @end
+win_rdg_rds_rap_user_groups: []
